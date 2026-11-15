@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
@@ -45,6 +46,7 @@ data class TvContextMenuItem(
  * navigation stack. `exit` is cancelled and Back is handled here, which is the whole focus trap:
  * the D-pad cannot wander out into the list underneath while the menu is open.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TvContextMenu(
     items: List<TvContextMenuItem>,
