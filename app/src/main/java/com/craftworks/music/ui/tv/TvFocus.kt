@@ -6,6 +6,7 @@ import androidx.compose.animation.core.snap
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -26,8 +27,11 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
@@ -222,6 +226,27 @@ fun Modifier.tvArtworkParallax(
             offsetFraction = ((centerX / screenWidth) - 0.5f) * 2f
         }
         .graphicsLayer { translationX = -drift * shiftPx }
+}
+
+/**
+ * Requests focus the first time this element is placed — used to land the D-pad on the primary
+ * action of a freshly opened screen without fighting the nav host's transition.
+ *
+ * Lived in the old TV home screen until P2 moved it here, because the now-playing screen needs it
+ * too and a screen file is the wrong home for a focus primitive.
+ */
+@Composable
+fun Modifier.tvRequestFocusOnFirstAppearance(): Modifier {
+    val requester = remember { FocusRequester() }
+    var placed by remember { mutableStateOf(false) }
+
+    LaunchedEffect(placed) {
+        if (placed) runCatching { requester.requestFocus() }
+    }
+
+    return this
+        .focusRequester(requester)
+        .onPlaced { placed = true }
 }
 
 /** How long OK must be held for a long press on a D-pad. */

@@ -80,7 +80,7 @@ import com.craftworks.music.player.ChoraMediaLibraryService
 import com.craftworks.music.ui.elements.tv.TvHorizontalSongCard
 import com.craftworks.music.ui.playing.LyricsView
 import com.craftworks.music.ui.playing.dpToPx
-import com.craftworks.music.ui.screens.tv.requestFocusOnFirstGainingVisibility
+import com.craftworks.music.ui.tv.tvRequestFocusOnFirstAppearance
 import com.gigamole.composefadingedges.marqueeHorizontalFadingEdges
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -364,7 +364,7 @@ fun TvNowPlaying(
                             it,
                             Modifier
                                 .size(IconButtonDefaults.LargeButtonSize)
-                                .requestFocusOnFirstGainingVisibility()
+                                .tvRequestFocusOnFirstAppearance()
                                 .focusProperties {
                                     up = FocusRequester.Cancel
                                 }

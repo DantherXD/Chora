@@ -73,6 +73,7 @@ import com.craftworks.music.ui.screens.tv.TvAlbumScreen
 import com.craftworks.music.ui.screens.tv.TvArtistDetailsScreen
 import com.craftworks.music.ui.screens.tv.TvArtistScreen
 import com.craftworks.music.ui.screens.tv.TvBrowseScreen
+import com.craftworks.music.ui.screens.tv.TvHomeListsScreen
 import com.craftworks.music.ui.screens.tv.TvHomeScreen
 import com.craftworks.music.ui.screens.tv.TvLibraryScreen
 import com.craftworks.music.ui.screens.tv.TvPlaylistDetails
@@ -198,12 +199,19 @@ fun SetupNavGraph(
                         else -> emptyList()
                     }
 
-                    HomeListsScreen(
-                        albums = albums,
-                        viewModel = viewModel,
-                        categoryKey = category,
-                        navHostController = navController,
-                    )
+                    if (isTv)
+                        TvHomeListsScreen(
+                            albums = albums,
+                            categoryKey = category,
+                            navHostController = navController,
+                        )
+                    else
+                        HomeListsScreen(
+                            albums = albums,
+                            viewModel = viewModel,
+                            categoryKey = category,
+                            navHostController = navController,
+                        )
                 }
 
                 composable<Screen.Songs> { backStackEntry ->

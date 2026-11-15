@@ -23,6 +23,8 @@
     <string name="action_skip_for_now">Skip for now</string>
     <string name="action_download">Download</string>
     <string name="action_more">More</string>
+    <string name="action_see_all">See All</string>
+    <string name="action_go_to_album">Go To Album</string>
 
     <string name="action_add_radio">Add Radio</string>
 
