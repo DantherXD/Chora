@@ -33,6 +33,22 @@ android {
         }
     }
 
+    // TV typography is bundled per flavor under one set of neutral resource names
+    // (res/font/chora_display_*). applicationId stays identical across flavors; only the
+    // typeface bytes differ. `sfpro` overlays licensed SF Pro Display files placed in
+    // app/src/sfpro/res/font (see app/src/sfpro/FONTS.md). `foss` (F-Droid) ships the
+    // open Inter fallback from main and must never contain SF Pro.
+    flavorDimensions += "fonts"
+
+    productFlavors {
+        create("sfpro") {
+            dimension = "fonts"
+        }
+        create("foss") {
+            dimension = "fonts"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
