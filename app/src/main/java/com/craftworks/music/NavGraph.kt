@@ -85,6 +85,7 @@ import com.craftworks.music.ui.screens.tv.settings.TvS_AppearanceScreen
 import com.craftworks.music.ui.screens.tv.settings.TvS_PlaybackScreen
 import com.craftworks.music.ui.screens.tv.settings.TvS_ProviderScreen
 import com.craftworks.music.ui.theme.tv.LocalTvMotion
+import com.craftworks.music.ui.theme.tv.spec
 import com.craftworks.music.ui.tv.TvAppScaffold
 import com.craftworks.music.ui.tv.isRootOf
 import com.craftworks.music.ui.tv.toTvTab
