@@ -26,8 +26,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.kyant.backdrop.layerBackdrop
-import com.kyant.backdrop.rememberLayerBackdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 
 /** Launch-argument names for the temporary glass probe (removed in P5). */
 object TvGlassProbeArgs {
