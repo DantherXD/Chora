@@ -243,7 +243,7 @@ fun SetupNavGraph(
                         }
                         val viewModel: AlbumScreenViewModel = hiltViewModel(parentEntry)
                         if (isTv)
-                            TvAlbumScreen(navController, viewModel)
+                            TvAlbumScreen(navController, viewModel, mediaController)
                         else
                             AlbumScreen(navController, mediaController, viewModel)
                     }

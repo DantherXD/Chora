@@ -18,7 +18,23 @@
     <string name="now_playing_lyrics_credit">Lyrics provided by %s</string>
     <string name="now_playing_lyrics_uploader_credit">Submitted by %s</string>
 
-    // TV Browse (placeholder until P2-F)
+    // TV Browse
     <string name="tv_browse_empty_title">Nothing to browse yet</string>
     <string name="tv_browse_empty_body">Connect a media provider to see curated shelves here.</string>
+    <string name="tv_browse_new_releases">New Releases</string>
+    <string name="tv_browse_genres">Genres</string>
+
+    // TV Library
+    <string name="tv_library_albums">Albums</string>
+    <string name="tv_library_artists">Artists</string>
+    <string name="tv_library_songs">Songs</string>
+    <string name="tv_library_playlists">Playlists</string>
+    <string name="tv_library_album_count">%1$d albums</string>
+    <string name="tv_library_song_count">%1$d songs</string>
+
+    // TV Radio
+    <string name="tv_radio_live">LIVE</string>
+
+    // TV Search
+    <string name="tv_search_placeholder">Artists, Songs, Albums</string>
 </resources>
