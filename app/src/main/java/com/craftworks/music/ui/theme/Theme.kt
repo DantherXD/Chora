@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import androidx.tv.material3.MaterialTheme
+import com.craftworks.music.ui.theme.tv.TvTheme
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -67,18 +67,10 @@ fun MusicPlayerTheme(
     }
 
     if (isTv) {
-        val colorScheme = when {
-            darkTheme -> androidx.tv.material3.darkColorScheme()
-            else -> androidx.tv.material3.lightColorScheme()
-        }
-
-        println("using theme dark:$darkTheme for tv")
-
-        MaterialTheme(
-            colorScheme = colorScheme,
-            typography = androidx.tv.material3.Typography(),
-            content = content
-        )
+        // TV is dark-only (spec §4.2): the phone light/dark selection is ignored here and
+        // dynamic color is never called on this path. TvTheme owns the TV tokens.
+        println("using tv theme (dark-only)")
+        TvTheme(content = content)
     }
     else {
         val colorScheme = when {

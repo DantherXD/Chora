@@ -55,6 +55,10 @@ class AppearanceSettingsManager @Inject constructor(
         private val USE_REFRESH_ANIMATION = booleanPreferencesKey("use_refresh_animation")
         private val SHOW_TRACK_NUMBERS = booleanPreferencesKey("show_track_numbers")
 
+        // TV reduce-motion / large-text flags (spec §4.7, plan C4). No settings UI until P4.
+        private val REDUCE_MOTION = booleanPreferencesKey("reduce_motion")
+        private val LARGE_TEXT = booleanPreferencesKey("large_text")
+
         private val OLED_PROTECTION_MODE = stringPreferencesKey("oled_protection")
         private val DISABLE_SCREEN_STANDBY = booleanPreferencesKey("disable_screen_standby")
         private val ALBUM_DETAILS_BUTTONS = stringPreferencesKey("album_details_buttons")
@@ -229,6 +233,32 @@ class AppearanceSettingsManager @Inject constructor(
         withContext(NonCancellable) {
             context.dataStore.edit { preferences ->
                 preferences[SHOW_TRACK_NUMBERS] = showTrackNumbers
+            }
+        }
+    }
+
+    /** In-app reduced-motion toggle, ORed with the system animator scale. */
+    val reduceMotionFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[REDUCE_MOTION] ?: false
+    }
+
+    suspend fun setReduceMotion(enabled: Boolean) {
+        withContext(NonCancellable) {
+            context.dataStore.edit { preferences ->
+                preferences[REDUCE_MOTION] = enabled
+            }
+        }
+    }
+
+    /** Large-text flag for the TV layout scale; the settings UI lands in P4. */
+    val largeTextFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[LARGE_TEXT] ?: false
+    }
+
+    suspend fun setLargeText(enabled: Boolean) {
+        withContext(NonCancellable) {
+            context.dataStore.edit { preferences ->
+                preferences[LARGE_TEXT] = enabled
             }
         }
     }

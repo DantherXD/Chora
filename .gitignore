@@ -13,3 +13,7 @@ local.properties
 /crowdin.yml
 /.idea/
 /.kotlin/
+
+# Licensed SF Pro Display files for the `sfpro` flavor. Personal use only, never published:
+# the face is proprietary and the flavor is built locally (see app/src/sfpro/FONTS.md).
+/app/src/sfpro/res/font/

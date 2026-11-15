@@ -26,11 +26,12 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug
+        # `foss` only: the `sfpro` flavor needs licensed fonts that are not in the repo.
+        run: ./gradlew assembleFossDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v7
         with:
-          path: app/build/outputs/apk/sfpro/debug/app-sfpro-debug.apk
+          path: app/build/outputs/apk/foss/debug/app-foss-debug.apk
           archive: false
           if-no-files-found: error

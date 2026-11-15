@@ -12,9 +12,14 @@ import com.craftworks.music.R
  * tracking in `TvTypography` instead of a Text optical size.
  *
  * The four resource names are the only font names the TV code knows about. Whichever
- * `fonts` flavor is built supplies them: `sfpro` overlays licensed SF Pro Display files,
- * `foss` keeps the bundled open-face fallback. Nothing outside this file should reference
- * `R.font.chora_display_*`, so a face swap never touches layout or screen code.
+ * `fonts` flavor is built resolves them from its own source set — the flavor split is the
+ * swap mechanism, with no runtime lookup, no resource overlay and no BuildConfig branch:
+ *
+ *   - `sfpro` → `app/src/sfpro/res/font/chora_display_*.otf` (licensed SF Pro Display)
+ *   - `foss`  → `app/src/foss/res/font/chora_display_*.ttf`  (Inter Display, OFL)
+ *
+ * Nothing outside this file should reference `R.font.chora_display_*`, so a face change
+ * never touches layout or screen code.
  */
 object TvFonts {
     val Display: FontFamily = FontFamily(
