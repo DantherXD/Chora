@@ -10,6 +10,14 @@ sealed interface Screen {
     object Home : Screen
     @Serializable
     data class HomeLists(val category: String) : Screen
+
+    // TV-only destinations (spec §5.2). No phone entry point navigates here; the TV tab bar
+    // is the only caller. Names are fixed because they are the deep-link/back-stack identity.
+    @Serializable
+    object Browse : Screen
+    @Serializable
+    object Library : Screen
+
     @Serializable
     object Songs : Screen
     @Serializable

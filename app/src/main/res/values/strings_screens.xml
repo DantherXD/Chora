@@ -17,4 +17,8 @@
     // Lyrics Credits
     <string name="now_playing_lyrics_credit">Lyrics provided by %s</string>
     <string name="now_playing_lyrics_uploader_credit">Submitted by %s</string>
+
+    // TV Browse (placeholder until P2-F)
+    <string name="tv_browse_empty_title">Nothing to browse yet</string>
+    <string name="tv_browse_empty_body">Connect a media provider to see curated shelves here.</string>
 </resources>
