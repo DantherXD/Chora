@@ -83,6 +83,9 @@ dependencies {
     implementation(libs.androidx.tv.foundation)
     implementation(libs.androidx.tv.material)
 
+    // TV glass surfaces (Apple Music reskin)
+    implementation(libs.backdrop)
+
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.reorderable)
