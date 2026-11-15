@@ -78,7 +78,7 @@ fun TvLibraryScreen(
     val recentAlbums by viewModel.recentAlbums.collectAsStateWithLifecycle()
 
     val categories = listOf(
-        Category(R.string.tv_library_albums, R.drawable.round_library_music_24, Screen.Albums),
+        Category(R.string.tv_library_albums, R.drawable.rounded_library_music_24, Screen.Albums),
         Category(R.string.tv_library_artists, R.drawable.rounded_artist_24, Screen.Artists),
         Category(R.string.tv_library_songs, R.drawable.round_music_note_24, Screen.Songs),
         Category(R.string.tv_library_playlists, R.drawable.rounded_queue_music_24, Screen.Playlists),
