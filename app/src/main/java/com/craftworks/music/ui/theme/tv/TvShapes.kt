@@ -45,10 +45,32 @@ object TvDimens {
     val tileSize = 220.dp
     val artistTileSize = 200.dp
 
+    /** Controls and glyphs (spec §4.4: 28dp inline, 32dp controls, 40dp transport). */
+    val buttonHeight = 56.dp
+    val iconInline = 28.dp
+    val iconControl = 32.dp
+    val iconTransport = 40.dp
+    val iconButtonSize = 56.dp
+
+    /** Rows and headers (spec §6/§7). */
+    val settingsRowHeight = 76.dp
+    val trackRowHeight = 72.dp
+    val listRowShape = 12.dp
+
+    /** Detail header (spec §6). */
+    val detailArtworkLarge = 360.dp
+    val detailArtworkCollapsed = 120.dp
+    val heroMaxWidth = 1280.dp
+    val heroHeight = 720.dp
+    val minTouchTarget = 48.dp
+
     /** Focus language (spec §4.6). */
     val focusRingWidth = 3.dp
     val focusGlowWidth = 8.dp
     val focusLift = 8.dp
+
+    /** Artwork drift inside a focused tile, opposite to its position on screen (spec §4.6). */
+    val focusParallax = 4.dp
     val focusScaleTile = 1.06f
     val focusScaleTab = 1.04f
     val focusScaleButton = 1.03f
