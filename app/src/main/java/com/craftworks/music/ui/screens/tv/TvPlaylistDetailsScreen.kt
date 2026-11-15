@@ -1,26 +1,17 @@
 package com.craftworks.music.ui.screens.tv
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,20 +19,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.focusRestorer
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,236 +28,195 @@ import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import androidx.tv.material3.Button
-import androidx.tv.material3.ButtonDefaults
-import androidx.tv.material3.Icon
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.OutlinedButton
-import androidx.tv.material3.Text
-import coil3.compose.AsyncImage
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.craftworks.music.R
-import com.craftworks.music.data.model.LibraryType
 import com.craftworks.music.data.model.Screen
 import com.craftworks.music.data.model.id
-import com.craftworks.music.managers.MediaProviderManager
 import com.craftworks.music.player.SongHelper
-import com.craftworks.music.player.rememberManagedMediaController
 import com.craftworks.music.ui.elements.dialogs.tv.SongDialog
-import com.craftworks.music.ui.elements.tv.TvHorizontalSongCard
+import com.craftworks.music.ui.elements.tv.apple.TvButtonStyle
+import com.craftworks.music.ui.elements.tv.apple.TvContextMenu
+import com.craftworks.music.ui.elements.tv.apple.TvContextMenuItem
+import com.craftworks.music.ui.elements.tv.apple.TvDetailHeader
+import com.craftworks.music.ui.elements.tv.apple.TvDetailMiniHeader
+import com.craftworks.music.ui.elements.tv.apple.TvEmptyState
+import com.craftworks.music.ui.elements.tv.apple.TvGlassButton
+import com.craftworks.music.ui.elements.tv.apple.TvTrackRow
+import com.craftworks.music.ui.theme.tv.TvDimens
+import com.craftworks.music.ui.tv.LocalTvTopInset
 import com.craftworks.music.ui.viewmodels.PlaylistScreenViewModel
 import com.craftworks.music.utils.StringUtils
 import kotlinx.coroutines.launch
 
-
-@Preview(showBackground = true, showSystemUi = false)
+/**
+ * Playlist detail (spec §6): same shell as album detail — collapsing header, Play / Shuffle, track
+ * rows — but the tracks come from `selectedPlaylistSongs`, which has no leading playlist item.
+ */
 @Composable
 fun TvPlaylistDetails(
     selectedPlaylistId: String? = null,
     selectedPlaylistImage: String? = null,
     navHostController: NavHostController = rememberNavController(),
-    mediaController: MediaController? = rememberManagedMediaController().value,
+    mediaController: MediaController? = null,
     viewModel: PlaylistScreenViewModel = hiltViewModel(),
 ) {
+    val playlistMetadata = viewModel.selectedPlaylist.collectAsStateWithLifecycle().value?.mediaMetadata
+    val songs by viewModel.selectedPlaylistSongs.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+
+    val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
+    val topInset = LocalTvTopInset.current
+    val collapseDistancePx = with(LocalDensity.current) { 360.dp.toPx() }
+
+    var menuSong by remember { mutableStateOf<MediaItem?>(null) }
+    var selectedSong by remember { mutableStateOf(MediaItem.EMPTY) }
+    var showSongDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(selectedPlaylistId) {
         if (selectedPlaylistId != null) viewModel.loadPlaylistDetails(selectedPlaylistId)
     }
 
-    val playlistMetadata =
-        viewModel.selectedPlaylist.collectAsStateWithLifecycle().value?.mediaMetadata
-
-    val currentProvider by MediaProviderManager.currentProvider.collectAsStateWithLifecycle()
-
-    val playlistSongs = viewModel.selectedPlaylistSongs.collectAsStateWithLifecycle().value
-    val isLoading = viewModel.isLoading.collectAsStateWithLifecycle().value
-
-    var selectedSong by remember { mutableStateOf(MediaItem.EMPTY) }
-    var showSongDialog by remember { mutableStateOf(false) }
-
-    val playlistDuration =
-        remember(playlistSongs) { playlistSongs.sumOf { it.mediaMetadata.durationMs ?: 0 } }
-
-    val playRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) { playRequester.requestFocus() }
-
-    AnimatedVisibility(
-        visible = !isLoading,
-        enter = fadeIn()
-    ) {
-        val coroutineScope = rememberCoroutineScope()
-        val playRequester = remember { FocusRequester() }
-
-        LaunchedEffect(Unit) { playRequester.requestFocus() }
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 48.dp)
-                .focusGroup(),
-            horizontalArrangement = Arrangement.spacedBy(48.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .width(260.dp)
-                    .fillMaxHeight()
-                    .padding(vertical = 24.dp)
-                    .focusRestorer(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(
-                            currentProvider?.getImageUrl(
-                                id = selectedPlaylistId ?: "",
-                                itemType = LibraryType.PLAYLIST
-                            )
-                        )
-                        .diskCacheKey(selectedPlaylistId)
-                        .placeholderMemoryCacheKey(selectedPlaylistId)
-                        .memoryCacheKey(selectedPlaylistId)
-                        .diskCachePolicy(CachePolicy.DISABLED)
-                        .memoryCachePolicy(CachePolicy.DISABLED)
-                        .crossfade(true)
-                        .build(),
-                    fallback = painterResource(R.drawable.placeholder),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(240.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                )
-
-                Column(
-                    verticalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    // Title
-                    Text(
-                        text = playlistMetadata?.title?.toString() ?: "",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    // duration
-                    Text(
-                        text = StringUtils.formatSeconds((playlistDuration / 1000).toInt()),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Button (
-                        onClick = {
-                            coroutineScope.launch {
-                                SongHelper.play(
-                                    playlistSongs,
-                                    0,
-                                    mediaController
-                                )
-                                navHostController.navigate(Screen.NowPlayingLandscape) {
-                                    launchSingleTop = true
-                                }
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(playRequester),
-                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding
-                    ) {
-                        Icon(
-                            Icons.Rounded.PlayArrow,
-                            contentDescription = null,
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                        )
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        Text(stringResource(R.string.action_play))
-                    }
-
-                    OutlinedButton(
-                        onClick = {
-                            mediaController?.shuffleModeEnabled = true
-                            coroutineScope.launch {
-                                val random = playlistSongs.indices.random()
-                                SongHelper.play(
-                                    playlistSongs,
-                                    random,
-                                    mediaController
-                                )
-                                navHostController.navigate(Screen.NowPlayingLandscape) {
-                                    launchSingleTop = true
-                                }
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding
-                    ) {
-                        Icon(
-                            ImageVector.vectorResource(R.drawable.round_shuffle_28),
-                            contentDescription = null,
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                        )
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        Text(stringResource(R.string.action_shuffle))
-                    }
-                }
-            }
-
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .focusGroup()
-                    .focusRestorer(),
-                contentPadding = PaddingValues(vertical = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(playlistSongs) { song ->
-                    TvHorizontalSongCard (
-                        song = song,
-                        showTrackNumber = false,
-                        onClick = {
-                            coroutineScope.launch {
-                                SongHelper.play(playlistSongs, playlistSongs.indexOf(song), mediaController)
-                                navHostController.navigate(Screen.NowPlayingLandscape) {
-                                    launchSingleTop = true
-                                }
-                            }
-                        },
-                        onLongClick = {
-                            selectedSong = song
-                            showSongDialog = true
-                        }
-                    )
-                }
-            }
+    val collapse by remember(listState, collapseDistancePx) {
+        derivedStateOf {
+            if (listState.firstVisibleItemIndex > 0) 1f
+            else (listState.firstVisibleItemScrollOffset / collapseDistancePx).coerceIn(0f, 1f)
         }
     }
 
-    if (showSongDialog)
+    val title = playlistMetadata?.title?.toString().orEmpty()
+    val artworkUrl = playlistMetadata?.artworkUri?.toString() ?: selectedPlaylistImage
+    val currentMediaId = mediaController?.currentMediaItem?.mediaId
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (songs.isEmpty()) {
+            TvEmptyState(
+                title = stringResource(R.string.tv_browse_empty_title),
+                body = if (isLoading) null else stringResource(R.string.tv_browse_empty_body),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = topInset),
+            )
+        } else {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = TvDimens.screenMarginHorizontal,
+                    end = TvDimens.screenMarginHorizontal,
+                    top = topInset,
+                    bottom = TvDimens.screenMarginBottom,
+                ),
+                verticalArrangement = Arrangement.spacedBy(TvDimens.space4),
+            ) {
+                item(key = "header") {
+                    val totalMs = remember(songs) {
+                        songs.sumOf { it.mediaMetadata.durationMs ?: 0L }
+                    }
+
+                    TvDetailHeader(
+                        artworkUrl = artworkUrl,
+                        cacheKey = selectedPlaylistId,
+                        title = title,
+                        subtitle = playlistMetadata?.artist?.toString(),
+                        metadata = stringResource(
+                            R.string.tv_library_song_count,
+                            songs.size,
+                        ) + " • " + StringUtils.formatSeconds((totalMs / 1000).toInt()),
+                        collapseFraction = collapse,
+                        actions = {
+                            Row(horizontalArrangement = Arrangement.spacedBy(TvDimens.space16)) {
+                                TvGlassButton(
+                                    text = stringResource(R.string.action_play),
+                                    style = TvButtonStyle.Primary,
+                                    iconRes = R.drawable.round_play_arrow_24,
+                                    onClick = {
+                                        scope.launch {
+                                            SongHelper.play(songs, 0, mediaController)
+                                            navHostController.navigate(Screen.NowPlayingLandscape) {
+                                                launchSingleTop = true
+                                            }
+                                        }
+                                    },
+                                )
+                                TvGlassButton(
+                                    text = stringResource(R.string.action_shuffle),
+                                    iconRes = R.drawable.round_shuffle_28,
+                                    onClick = {
+                                        scope.launch {
+                                            SongHelper.play(songs.shuffled(), 0, mediaController)
+                                            navHostController.navigate(Screen.NowPlayingLandscape) {
+                                                launchSingleTop = true
+                                            }
+                                        }
+                                    },
+                                )
+                            }
+                        },
+                    )
+                }
+
+                itemsIndexed(songs, key = { _, song -> song.mediaId }) { index, song ->
+                    TvTrackRow(
+                        index = index + 1,
+                        title = song.mediaMetadata.title?.toString().orEmpty(),
+                        artist = song.mediaMetadata.artist?.toString(),
+                        durationLabel = song.mediaMetadata.durationMs
+                            ?.let { StringUtils.formatSeconds((it / 1000).toInt()) },
+                        isPlaying = currentMediaId != null && song.mediaId == currentMediaId,
+                        onClick = {
+                            scope.launch {
+                                SongHelper.play(songs, index, mediaController)
+                                navHostController.navigate(Screen.NowPlayingLandscape) {
+                                    launchSingleTop = true
+                                }
+                            }
+                        },
+                        onLongClick = { menuSong = song },
+                    )
+                }
+            }
+
+            TvDetailMiniHeader(
+                title = title,
+                artworkUrl = artworkUrl,
+                cacheKey = selectedPlaylistId,
+                visible = collapse > 0.9f,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = topInset),
+            )
+        }
+
+        menuSong?.let { song ->
+            TvContextMenu(
+                title = song.mediaMetadata.title?.toString().orEmpty(),
+                items = listOf(
+                    TvContextMenuItem(stringResource(R.string.action_play_next)) {
+                        SongHelper.playNext(listOf(song), mediaController)
+                    },
+                    TvContextMenuItem(stringResource(R.string.action_add_to_queue)) {
+                        SongHelper.enqueue(listOf(song), mediaController)
+                    },
+                    TvContextMenuItem(stringResource(R.string.action_more)) {
+                        selectedSong = song
+                        showSongDialog = true
+                    },
+                ),
+                onDismiss = { menuSong = null },
+            )
+        }
+    }
+
+    if (showSongDialog) {
         SongDialog(
             song = selectedSong,
             onSetRating = { rating ->
-                viewModel.setSongRating(
-                    songId = selectedSong.mediaMetadata.id ?: "",
-                    rating = rating
-                )
+                selectedSong.mediaMetadata.id?.let { id ->
+                    viewModel.setSongRating(id, rating)
+                }
             },
-            onDownload = {
-                viewModel.downloadSong(it)
-            },
-            setShowDialog = { showSongDialog = it }
+            onDownload = { viewModel.downloadSong(it) },
+            setShowDialog = { showSongDialog = it },
         )
+    }
 }

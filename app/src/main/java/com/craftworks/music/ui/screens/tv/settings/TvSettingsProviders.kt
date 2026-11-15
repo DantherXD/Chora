@@ -31,6 +31,7 @@ import androidx.tv.material3.Tab
 import androidx.tv.material3.TabRow
 import androidx.tv.material3.Text
 import com.craftworks.music.R
+import com.craftworks.music.ui.tv.LocalTvTopInset
 import com.craftworks.music.managers.MediaProviderManager
 import com.craftworks.music.managers.settings.MediaProviderSettingsManager
 import com.craftworks.music.ui.elements.dialogs.tv.provider.ModifyLrcLibProviderDialog
@@ -62,7 +63,12 @@ fun TvS_ProviderScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 48.dp, vertical = 24.dp),
+            .padding(
+                start = 48.dp,
+                end = 48.dp,
+                top = LocalTvTopInset.current + 24.dp,
+                bottom = 24.dp,
+            ),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         TabRow(

@@ -32,6 +32,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.craftworks.music.R
+import com.craftworks.music.ui.tv.LocalTvTopInset
 import com.craftworks.music.managers.settings.PlaybackSettingsManager
 import com.craftworks.music.ui.elements.dialogs.tv.TranscodingBitrateDialog
 import com.craftworks.music.ui.elements.dialogs.tv.TranscodingFormatDialog
@@ -64,7 +65,12 @@ fun TvS_PlaybackScreen() {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(horizontal = 32.dp, vertical = 24.dp)
+        contentPadding = PaddingValues(
+            start = 32.dp,
+            end = 32.dp,
+            top = LocalTvTopInset.current + 24.dp,
+            bottom = 24.dp,
+        )
     ) {
         item {
             SettingsButtonItem(

@@ -27,6 +27,8 @@ import androidx.tv.material3.Text
 import androidx.tv.material3.WideButton
 import com.craftworks.music.R
 import com.craftworks.music.data.model.Screen
+import com.craftworks.music.ui.theme.tv.TvDimens
+import com.craftworks.music.ui.tv.LocalTvTopInset
 
 
 @Preview(
@@ -42,10 +44,18 @@ fun TvSettingScreen(
         focusRequester.requestFocus()
     }
 
+    // Content is drawn under the tab bar, so the first row starts below it.
+    val topInset = LocalTvTopInset.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 48.dp, vertical = 24.dp)
+            .padding(
+                start = TvDimens.screenMarginHorizontal,
+                end = TvDimens.screenMarginHorizontal,
+                top = topInset + TvDimens.space24,
+                bottom = TvDimens.space24,
+            )
             .focusRestorer(focusRequester)
             .focusRequester(focusRequester)
             .focusGroup(),

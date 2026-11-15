@@ -55,6 +55,8 @@ import com.craftworks.music.R
 import com.craftworks.music.data.model.Screen
 import com.craftworks.music.data.model.id
 import com.craftworks.music.player.SongHelper
+import com.craftworks.music.ui.theme.tv.TvDimens
+import com.craftworks.music.ui.tv.LocalTvTopInset
 import com.craftworks.music.ui.elements.dialogs.tv.SongDialog
 import com.craftworks.music.ui.elements.tv.TvAlbumCard
 import com.craftworks.music.ui.elements.tv.TvArtistCard
@@ -120,7 +122,13 @@ fun TvSearchScreen(
             .focusGroup()
             .focusRequester(focusRequester)
             .focusRestorer(focusRequester),
-        contentPadding = PaddingValues(horizontal = 48.dp, vertical = 24.dp),
+        // Content is drawn under the tab bar, so the first row starts below it.
+        contentPadding = PaddingValues(
+            start = TvDimens.screenMarginHorizontal,
+            end = TvDimens.screenMarginHorizontal,
+            top = LocalTvTopInset.current + TvDimens.space24,
+            bottom = TvDimens.space24,
+        ),
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {

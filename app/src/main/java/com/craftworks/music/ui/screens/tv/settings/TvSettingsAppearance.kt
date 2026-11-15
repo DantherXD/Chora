@@ -33,6 +33,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.craftworks.music.R
+import com.craftworks.music.ui.tv.LocalTvTopInset
 import com.craftworks.music.managers.settings.AppTheme
 import com.craftworks.music.managers.settings.AppearanceSettingsManager
 import com.craftworks.music.managers.settings.OLEDProtectionMode
@@ -69,7 +70,12 @@ fun TvS_AppearanceScreen() {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(horizontal = 32.dp, vertical = 24.dp)
+        contentPadding = PaddingValues(
+            start = 32.dp,
+            end = 32.dp,
+            top = LocalTvTopInset.current + 24.dp,
+            bottom = 24.dp,
+        )
     ) {
         // Username, Theme, Background, Navbar Items, Home Items, Title Alignment
         item {
