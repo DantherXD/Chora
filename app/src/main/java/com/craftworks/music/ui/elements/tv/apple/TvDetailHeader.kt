@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -18,11 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Text
 import com.craftworks.music.ui.theme.tv.LocalTvColors
+import kotlin.math.roundToInt
 import com.craftworks.music.ui.theme.tv.LocalTvShapes
 import com.craftworks.music.ui.theme.tv.LocalTvTypography
 import com.craftworks.music.ui.theme.tv.TvDimens
@@ -65,13 +68,14 @@ fun TvDetailHeader(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.spacedBy(TvDimens.space32),
     ) {
-        // Size drives both the laid-out box and the decode request, so a collapsed header asks
-        // for a 120dp bitmap instead of the 360dp one it just released.
+        // The box shrinks continuously with the scroll, but the *request* is quantised into a few
+        // steps: one decode per step instead of a fresh bitmap for every scroll frame.
         TvArtwork(
             data = artworkUrl,
             cacheKey = cacheKey,
-            size = artworkSize,
+            requestSize = quantise(artworkSize),
             shape = if (circularArtwork) shapes.pill else RoundedCornerShape(16.dp),
+            modifier = Modifier.size(artworkSize),
         )
 
         Column(
@@ -166,3 +170,10 @@ fun TvDetailMiniHeader(
         }
     }
 }
+
+/**
+ * Rounds a scroll-driven artwork size up to the next 60dp step (120→360), so the collapsing header
+ * asks for a handful of decodes over a whole scroll instead of one per frame.
+ */
+private fun quantise(size: Dp): Dp =
+    (((size.value / 60f).roundToInt() * 60f).coerceIn(120f, 360f)).dp

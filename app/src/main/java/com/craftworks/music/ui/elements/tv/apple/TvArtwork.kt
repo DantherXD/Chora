@@ -3,6 +3,7 @@ package com.craftworks.music.ui.elements.tv.apple
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
@@ -38,27 +39,33 @@ fun TvArtwork(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
     size: Dp? = null,
+    requestSize: Dp? = null,
     shape: Shape? = null,
     contentDescription: String? = null,
     crossfade: Boolean = true,
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
-    val targetPx = size?.let { with(density) { it.roundToPx() } }
+    val decodeSize = requestSize ?: size
+    val targetPx = decodeSize?.let { with(density) { it.roundToPx() } }
 
-    val request = ImageRequest.Builder(context)
-        .data(data)
-        .apply {
-            if (targetPx != null) size(targetPx, targetPx)
-            if (cacheKey != null) {
-                memoryCacheKey(cacheKey)
-                placeholderMemoryCacheKey(cacheKey)
-                diskCacheKey(cacheKey)
+    // `ImageRequest` is not a data class, so rebuilding it on every recomposition would look like
+    // a new model to Coil and restart the load. It is keyed on the inputs that matter instead.
+    val request = remember(data, cacheKey, targetPx, crossfade) {
+        ImageRequest.Builder(context)
+            .data(data)
+            .apply {
+                if (targetPx != null) size(targetPx, targetPx)
+                if (cacheKey != null) {
+                    memoryCacheKey(cacheKey)
+                    placeholderMemoryCacheKey(cacheKey)
+                    diskCacheKey(cacheKey)
+                }
             }
-        }
-        .diskCachePolicy(CachePolicy.ENABLED)
-        .crossfade(crossfade)
-        .build()
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .crossfade(crossfade)
+            .build()
+    }
 
     var imageModifier = modifier
     if (size != null) imageModifier = imageModifier.size(size)
