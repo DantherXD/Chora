@@ -164,8 +164,8 @@ fun TvBrowseScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(TvDimens.railTitleGap)) {
                             TvSkeleton(
                                 modifier = Modifier
-                                    .width(260.dp)
-                                    .height(TvDimens.space32)
+                                    .width(TvDimens.tileSize)
+                                    .height(TvDimens.space24)
                             )
                             Row(horizontalArrangement = Arrangement.spacedBy(TvDimens.railGap)) {
                                 repeat(5) {

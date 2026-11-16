@@ -28,6 +28,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
+import com.craftworks.music.ui.theme.tv.LocalTvShapes
 import com.craftworks.music.ui.theme.tv.LocalTvColors
 import com.craftworks.music.ui.theme.tv.LocalTvTypography
 import com.craftworks.music.ui.theme.tv.TvDimens
@@ -58,7 +59,7 @@ fun TvContextMenu(
 
     val colors = LocalTvColors.current
     val type = LocalTvTypography.current
-    val shape = RoundedCornerShape(24.dp)
+    val shape = LocalTvShapes.current.panel
 
     val firstItem = remember { FocusRequester() }
     LaunchedEffect(items) { firstItem.requestFocus() }
@@ -79,8 +80,8 @@ fun TvContextMenu(
     ) {
         Column(
             modifier = Modifier
-                .width(480.dp)
-                .heightIn(max = 640.dp)
+                .width(TvDimens.menuWidth)
+                .heightIn(max = TvDimens.menuMaxHeight)
                 .focusRequester(firstItem)
                 .focusProperties { exit = { FocusRequester.Cancel } }
                 .focusGroup()

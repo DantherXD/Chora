@@ -74,7 +74,7 @@ fun TvArtistDetailsScreen(
 
     val scope = rememberCoroutineScope()
     val gridState = rememberLazyGridState()
-    val collapseDistancePx = with(LocalDensity.current) { 360.dp.toPx() }
+    val collapseDistancePx = with(LocalDensity.current) { TvDimens.detailArtworkLarge.toPx() }
 
     LaunchedEffect(selectedArtistId) {
         if (selectedArtistId != null) viewModel.loadArtistDetails(selectedArtistId)

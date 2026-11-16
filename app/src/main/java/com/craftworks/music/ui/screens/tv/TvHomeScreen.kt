@@ -272,7 +272,7 @@ private fun Hero(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(540.dp)
+            .height(TvDimens.heroHeight)
             .background(colors.bgCanvasTop),
     ) {
         TvArtwork(
@@ -306,7 +306,7 @@ private fun Hero(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(TvDimens.space48)
-                .width(900.dp),
+                .width(TvDimens.heroTextWidth),
             verticalArrangement = Arrangement.spacedBy(TvDimens.space16),
         ) {
             Text(
@@ -392,7 +392,7 @@ private fun RailSkeletons() {
     Column(verticalArrangement = Arrangement.spacedBy(TvDimens.space32)) {
         repeat(2) {
             Column(verticalArrangement = Arrangement.spacedBy(TvDimens.railTitleGap)) {
-                TvSkeleton(modifier = Modifier.width(280.dp).height(TvDimens.space32))
+                TvSkeleton(modifier = Modifier.width(TvDimens.tileSize).height(TvDimens.space24))
                 Row(horizontalArrangement = Arrangement.spacedBy(TvDimens.railGap)) {
                     repeat(5) {
                         TvSkeleton(

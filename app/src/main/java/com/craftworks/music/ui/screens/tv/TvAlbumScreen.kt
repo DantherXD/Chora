@@ -108,6 +108,7 @@ fun TvAlbumScreen(
                 cacheKey = album.artworkKey,
                 title = album.mediaMetadata.title?.toString().orEmpty(),
                 subtitle = album.mediaMetadata.artist?.toString(),
+                fillWidth = true,
                 onClick = {
                     navHostController.navigate(
                         Screen.AlbumDetails(

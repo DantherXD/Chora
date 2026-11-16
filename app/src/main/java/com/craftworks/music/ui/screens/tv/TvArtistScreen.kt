@@ -83,6 +83,7 @@ fun TvArtistScreen(
             subtitle = artist.albumCount?.let { count ->
                 stringResource(R.string.tv_library_album_count, count)
             },
+            fillWidth = true,
             onClick = {
                 navHostController.navigate(
                     Screen.ArtistDetails(artist.id, artist.imageUrl)

@@ -1,5 +1,6 @@
 package com.craftworks.music.ui.tv
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -16,13 +17,14 @@ import com.craftworks.music.data.model.Screen
  */
 enum class TvTab(
     @StringRes val labelRes: Int,
+    @DrawableRes val iconRes: Int,
     val route: Screen,
 ) {
-    ListenNow(R.string.nav_listen_now, Screen.Home),
-    Browse(R.string.nav_browse, Screen.Browse),
-    Radio(R.string.nav_radios, Screen.Radios),
-    Library(R.string.nav_library, Screen.Library),
-    Search(R.string.nav_search, Screen.Search),
+    ListenNow(R.string.nav_listen_now, R.drawable.round_play_arrow_24, Screen.Home),
+    Browse(R.string.nav_browse, R.drawable.rounded_apps_24, Screen.Browse),
+    Radio(R.string.nav_radios, R.drawable.rounded_radio, Screen.Radios),
+    Library(R.string.nav_library, R.drawable.rounded_library_music_24, Screen.Library),
+    Search(R.string.nav_search, R.drawable.round_search_24, Screen.Search),
 }
 
 /**

@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -83,16 +84,28 @@ fun TvAppScaffold(
         }
 
         if (chromeVisible) {
-            TvTopTabBar(
-                backdrop = backdrop,
-                currentTab = currentTab,
-                onTabSelected = onTabSelected,
-                focusRequester = tabBarRequester,
+            // A wrapper rather than padding on the bar itself: padding there would sit *inside* the
+            // glass pill. Here it only caps the width the bar may take and centres what it measures
+            // to, so the bar keeps a 120dp gutter on both sides without growing a hollow pill.
+            Box(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .padding(top = TvDimens.tabBarTopInset)
-                    .onFocusChanged { tabBarFocused = it.hasFocus },
-            )
+                    .fillMaxWidth()
+                    .padding(
+                        start = TvDimens.tabBarSidePadding,
+                        end = TvDimens.tabBarSidePadding,
+                        top = TvDimens.tabBarTopInset,
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                TvTopTabBar(
+                    backdrop = backdrop,
+                    currentTab = currentTab,
+                    onTabSelected = onTabSelected,
+                    focusRequester = tabBarRequester,
+                    modifier = Modifier.onFocusChanged { tabBarFocused = it.hasFocus },
+                )
+            }
         }
     }
 }

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -45,6 +44,7 @@ import com.craftworks.music.ui.elements.tv.apple.TvSectionHeader
 import com.craftworks.music.ui.elements.tv.apple.artworkKey
 import com.craftworks.music.ui.elements.tv.apple.artworkUrlAt
 import com.craftworks.music.ui.theme.tv.LocalTvColors
+import com.craftworks.music.ui.theme.tv.LocalTvShapes
 import com.craftworks.music.ui.theme.tv.LocalTvTypography
 import com.craftworks.music.ui.theme.tv.TvDimens
 import com.craftworks.music.ui.tv.LocalTvTopInset
@@ -183,15 +183,15 @@ private fun CategoryTile(
 ) {
     val colors = LocalTvColors.current
     val type = LocalTvTypography.current
-    val shape = RoundedCornerShape(20.dp)
+    val shape = LocalTvShapes.current.tile
 
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     Box(
         modifier = Modifier
-            .width(440.dp)
-            .height(220.dp)
+            .width(380.dp)
+            .height(170.dp)
             .tvFocusTarget(
                 interactionSource = interactionSource,
                 shape = shape,
@@ -207,7 +207,7 @@ private fun CategoryTile(
                 onClickLabel = title,
                 onClick = onClick,
             )
-            .padding(TvDimens.space32),
+            .padding(TvDimens.space24),
         contentAlignment = Alignment.BottomStart,
     ) {
         Column(
@@ -218,7 +218,7 @@ private fun CategoryTile(
                 imageVector = ImageVector.vectorResource(glyphRes),
                 contentDescription = null,
                 tint = colors.labelSecondary,
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(TvDimens.iconControl),
             )
             Text(
                 text = title,

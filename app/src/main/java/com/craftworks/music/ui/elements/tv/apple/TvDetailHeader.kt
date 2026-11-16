@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +20,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Text
 import com.craftworks.music.ui.theme.tv.LocalTvColors
 import kotlin.math.roundToInt
@@ -56,9 +53,11 @@ fun TvDetailHeader(
 
     val fraction = collapseFraction.coerceIn(0f, 1f)
     val artworkSize = lerp(TvDimens.detailArtworkLarge, TvDimens.detailArtworkCollapsed, fraction)
+    // Interpolates between two scale styles instead of local sp literals, so the header follows the
+    // type scale when it changes rather than pinning the old 56/34sp.
     val titleStyle = type.screenTitle.copy(
-        fontSize = lerp(56.sp, 34.sp, fraction),
-        lineHeight = lerp(60.sp, 40.sp, fraction),
+        fontSize = lerp(type.screenTitle.fontSize, type.sectionTitle.fontSize, fraction),
+        lineHeight = lerp(type.screenTitle.lineHeight, type.sectionTitle.lineHeight, fraction),
     )
 
     Row(
@@ -74,7 +73,7 @@ fun TvDetailHeader(
             data = artworkUrl,
             cacheKey = cacheKey,
             requestSize = quantise(artworkSize),
-            shape = if (circularArtwork) shapes.pill else RoundedCornerShape(16.dp),
+            shape = if (circularArtwork) shapes.pill else shapes.tile,
             modifier = Modifier.size(artworkSize),
         )
 
@@ -148,7 +147,7 @@ fun TvDetailMiniHeader(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(TvDimens.space64)
+                .height(TvDimens.space48)
                 .padding(horizontal = TvDimens.screenMarginHorizontal),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(TvDimens.space16),
@@ -158,11 +157,11 @@ fun TvDetailMiniHeader(
                 cacheKey = cacheKey,
                 modifier = Modifier
                     .size(TvDimens.space48)
-                    .clip(RoundedCornerShape(8.dp)),
+                    .clip(LocalTvShapes.current.chip),
             )
             Text(
                 text = title,
-                style = type.sectionTitle.copy(fontSize = 28.sp, lineHeight = 32.sp),
+                style = type.sectionTitle,
                 color = colors.labelPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -172,8 +171,9 @@ fun TvDetailMiniHeader(
 }
 
 /**
- * Rounds a scroll-driven artwork size up to the next 60dp step (120→360), so the collapsing header
+ * Rounds a scroll-driven artwork size up to the next 40dp step (96→260), so the collapsing header
  * asks for a handful of decodes over a whole scroll instead of one per frame.
  */
 private fun quantise(size: Dp): Dp =
-    (((size.value / 60f).roundToInt() * 60f).coerceIn(120f, 360f)).dp
+    (((size.value / 40f).roundToInt() * 40f)
+        .coerceIn(TvDimens.detailArtworkCollapsed.value, TvDimens.detailArtworkLarge.value)).dp

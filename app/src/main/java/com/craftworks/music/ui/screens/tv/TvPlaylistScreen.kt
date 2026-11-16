@@ -46,6 +46,7 @@ fun TvPlaylistScreen(
             cacheKey = playlist.artworkKey,
             title = playlist.mediaMetadata.title?.toString().orEmpty(),
             subtitle = playlist.mediaMetadata.artist?.toString(),
+            fillWidth = true,
             onClick = {
                 navHostController.navigate(
                     Screen.PlaylistDetails(

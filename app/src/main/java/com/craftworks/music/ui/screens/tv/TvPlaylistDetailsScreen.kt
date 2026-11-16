@@ -66,7 +66,7 @@ fun TvPlaylistDetails(
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val topInset = LocalTvTopInset.current
-    val collapseDistancePx = with(LocalDensity.current) { 360.dp.toPx() }
+    val collapseDistancePx = with(LocalDensity.current) { TvDimens.detailArtworkLarge.toPx() }
 
     var menuSong by remember { mutableStateOf<MediaItem?>(null) }
     var selectedSong by remember { mutableStateOf(MediaItem.EMPTY) }

@@ -6,7 +6,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -54,6 +56,13 @@ fun TvMediaTile(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     size: Dp = TvDimens.tileSize,
+    /**
+     * Grid cells: take the cell's width and stay square, instead of a fixed [size].
+     *
+     * A fixed tile in a five-column grid overflows its cell (the cell is ~154dp on a 960dp canvas),
+     * so every grid call site sets this; rails in a `Row` keep the fixed size.
+     */
+    fillWidth: Boolean = false,
     shape: Shape = LocalTvShapes.current.tile,
     contentDescription: String? = title,
     onClick: () -> Unit,
@@ -65,10 +74,9 @@ fun TvMediaTile(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    Column(modifier = modifier.width(size)) {
+    Column(modifier = if (fillWidth) modifier.fillMaxWidth() else modifier.width(size)) {
         Box(
-            modifier = Modifier
-                .size(size)
+            modifier = (if (fillWidth) Modifier.fillMaxWidth().aspectRatio(1f) else Modifier.size(size))
                 .tvFocusTarget(interactionSource = interactionSource, shape = shape)
                 .clip(shape)
                 .background(colors.surface1)
@@ -134,6 +142,7 @@ fun TvArtistTile(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     size: Dp = TvDimens.artistTileSize,
+    fillWidth: Boolean = false,
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
 ) {
@@ -143,6 +152,7 @@ fun TvArtistTile(
         title = title,
         subtitle = subtitle,
         size = size,
+        fillWidth = fillWidth,
         shape = CircleShape,
         modifier = modifier,
         onClick = onClick,

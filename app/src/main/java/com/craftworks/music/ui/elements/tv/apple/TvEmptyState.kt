@@ -37,7 +37,7 @@ fun TvEmptyState(
 
     Column(
         modifier = modifier
-            .widthIn(max = 720.dp)
+            .widthIn(max = TvDimens.emptyStateMaxWidth)
             .padding(TvDimens.space32),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(TvDimens.space16),

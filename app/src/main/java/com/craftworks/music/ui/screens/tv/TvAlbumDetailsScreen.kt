@@ -86,7 +86,7 @@ fun TvAlbumDetails(
     val topInset = LocalTvTopInset.current
 
     // The header collapses over roughly the expanded artwork's height, in pixels.
-    val collapseDistancePx = with(LocalDensity.current) { 360.dp.toPx() }
+    val collapseDistancePx = with(LocalDensity.current) { TvDimens.detailArtworkLarge.toPx() }
 
     LaunchedEffect(selectedAlbumId) { viewModel.loadAlbumDetails(selectedAlbumId) }
 
